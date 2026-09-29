@@ -719,6 +719,15 @@ export const interactiveEntries: InteractiveEntry[] = [
     tags: ['potential', 'equipotential', 'field'],
   },
   {
+    id: 'capacitor-plates',
+    title: 'Parallel-Plate Capacitor',
+    description: 'Drag the plates, change their area, slide in a dielectric, and disconnect the battery to compare fixed-V and fixed-Q behavior.',
+    href: '/electromagnetism/capacitance#capacitor-plates',
+    module: 'Electromagnetism',
+    kind: 'inline',
+    tags: ['capacitor', 'dielectric', 'energy'],
+  },
+  {
     id: 'electron-gas',
     title: 'Electron Gas (Drude Drift)',
     description: 'Drag to apply a field and watch conduction electrons drift through the lattice against their random thermal motion.',

@@ -6,7 +6,7 @@ export const electromagnetismModule: ModuleMeta = {
   title: 'Electromagnetism',
   navLabel: 'Electromagnetism',
   summary:
-    'Coulomb’s law, electric fields, Gauss’ law and flux, electric potential, and circuits with Ohm’s law.',
+    'Coulomb’s law, electric fields, Gauss’ law and flux, electric potential, capacitance, and circuits with Ohm’s law.',
   audience: 'Self-learners moving from mechanics into electricity and the field picture.',
   prerequisites: ['Vectors in two dimensions', 'Coulomb’s law and charge', 'Work and potential energy'],
   learningObjectives: [
@@ -14,6 +14,7 @@ export const electromagnetismModule: ModuleMeta = {
     'Use superposition to combine fields and read field lines',
     'Connect electric flux to enclosed charge and use symmetry to apply Gauss’ law',
     'Connect electric potential energy, electric potential, and the field as its gradient',
+    'Relate capacitance to geometry and dielectrics and compute the energy stored in the field',
     'Relate microscopic electron drift to Ohm’s law and circuit behavior',
   ],
   status: 'active',
@@ -64,6 +65,21 @@ export const electromagnetismModule: ModuleMeta = {
         description:
           'Learn electric potential as potential energy per unit charge, visualize V(x,y) as a color map, and connect potential to the electric field.',
         canonicalPath: '/electromagnetism/potential',
+        image: '/social/physics-nook-card.svg',
+      },
+    },
+    {
+      id: 'electromagnetism-capacitance',
+      href: '/electromagnetism/capacitance',
+      title: 'Capacitance',
+      shortTitle: 'Capacitance',
+      description:
+        'Store charge and energy between conductors: C = Q/ΔV, parallel plates, dielectrics, and series–parallel combinations.',
+      seo: {
+        title: 'Capacitance',
+        description:
+          'Learn capacitance from the parallel-plate capacitor: C = ε₀A/d, the energy stored in the field, how dielectrics raise C, and how capacitors combine in series and parallel, with an interactive plate explorer.',
+        canonicalPath: '/electromagnetism/capacitance',
         image: '/social/physics-nook-card.svg',
       },
     },

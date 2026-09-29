@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button, ControlBar, Slider } from '../shared/InlineControls';
 import { Readout } from '../shared/Readout';
 import { slabPolarization } from '../../lib/electromagnetism/surfaceCharge';
+import { Arrow, ChargeMark } from './svgMarks';
 
 // A conducting block dropped into a uniform field, watched while it screens the
 // field out of its own interior. Time is the state, so the scene is a pure
@@ -36,39 +37,6 @@ const ELECTRONS = (() => {
 
 const FACE_MARKS = Array.from({ length: 6 }, (_, i) =>
   BLOCK.top + ((i + 0.5) * (BLOCK.bottom - BLOCK.top)) / 6);
-
-/**
- * A horizontal arrow drawn as its own geometry rather than with a stroke marker.
- * The interior arrows shrink to nothing as the block screens the field, and a
- * fixed marker head would still be sitting there at full size when they do.
- */
-function Arrow({ x1, y, x2, color, width = 2 }: {
-  x1: number; y: number; x2: number; color: string; width?: number;
-}) {
-  const span = x2 - x1;
-  const head = Math.min(10, Math.max(2.5, Math.abs(span) * 0.42));
-  const direction = span < 0 ? -1 : 1;
-  const base = x2 - direction * head;
-  return (
-    <g>
-      <line x1={x1} y1={y} x2={base} y2={y} stroke={color} strokeWidth={width} strokeLinecap="round" />
-      <polygon points={`${x2},${y} ${base},${y - head * 0.5} ${base},${y + head * 0.5}`} fill={color} />
-    </g>
-  );
-}
-
-/** A surface charge marker: an accent disc with an ink glyph, both growing with `weight`. */
-function ChargeMark({ x, y, sign, weight }: { x: number; y: number; sign: 1 | -1; weight: number }) {
-  const r = 3.5 + 5 * weight;
-  const arm = r * 0.55;
-  return (
-    <g opacity={0.25 + 0.75 * weight}>
-      <circle cx={x} cy={y} r={r} fill={sign > 0 ? positive : negative} fillOpacity={0.75} stroke={ink} strokeWidth={1} />
-      <line x1={x - arm} y1={y} x2={x + arm} y2={y} stroke={ink} strokeWidth={1.4} />
-      {sign > 0 ? <line x1={x} y1={y - arm} x2={x} y2={y + arm} stroke={ink} strokeWidth={1.4} /> : null}
-    </g>
-  );
-}
 
 export default function ConductorPolarization() {
   const [time, setTime] = useState(0);
@@ -142,12 +110,12 @@ export default function ConductorPolarization() {
       >
         {/* The applied field, unchanged throughout: the block screens it, it does not weaken it. */}
         <g opacity={0.5}>
-          <Arrow x1={30} y={30} x2={630} color={negative} />
-          <Arrow x1={30} y={270} x2={630} color={negative} />
+          <Arrow x1={30} y1={30} x2={630} y2={30} color={negative} />
+          <Arrow x1={30} y1={270} x2={630} y2={270} color={negative} />
           {FIELD_ROWS.map((y) => (
             <g key={y}>
-              <Arrow x1={30} y={y} x2={196} color={negative} />
-              <Arrow x1={466} y={y} x2={630} color={negative} />
+              <Arrow x1={30} y1={y} x2={196} y2={y} color={negative} />
+              <Arrow x1={466} y1={y} x2={630} y2={y} color={negative} />
             </g>
           ))}
         </g>
@@ -168,7 +136,7 @@ export default function ConductorPolarization() {
         {arrowOpacity > 0 ? (
           <g opacity={arrowOpacity}>
             {ARROW_STARTS.map((x) => (
-              <Arrow key={x} x1={x} y={150} x2={x + interior} color={ink} width={2.5} />
+              <Arrow key={x} x1={x} y1={150} x2={x + interior} y2={150} color={ink} width={2.5} />
             ))}
           </g>
         ) : null}

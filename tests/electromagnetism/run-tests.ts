@@ -31,6 +31,8 @@ import {
 } from '../../src/lib/electromagnetism/index.ts';
 import { TUTORIAL_STEPS, analyzeLoop, tutorialProgress, REQUIRED_KINDS,
   type TutorialElement } from '../../src/lib/electromagnetism/circuitTutorial.ts';
+import { boundChargeDensity, energyDensity, parallelCapacitance, parallelPlateCapacitance,
+  plateState, seriesCapacitance, storedEnergy } from '../../src/lib/electromagnetism/capacitor.ts';
 
 const near = (actual: number, expected: number, epsilon = 1e-9) => {
   assert.ok(Math.abs(actual - expected) <= epsilon, `${actual} should be near ${expected}`);
@@ -1025,6 +1027,67 @@ assert.deepEqual(computeFieldLines(presets.dipole, { width: 0, height: H }), [])
 
   // Step ids are unique and every step is reachable through isDone.
   assert.equal(new Set(TUTORIAL_STEPS.map((s) => s.id)).size, TUTORIAL_STEPS.length);
+}
+
+// --- Capacitors ----------------------------------------------------------
+{
+  // C = κε₀A/d: one square metre a millimetre apart is only about 8.85 nF.
+  const base = parallelPlateCapacitance(1, 1e-3);
+  near(base, 8.854e-9, 1e-12);
+  near(parallelPlateCapacitance(2, 1e-3), 2 * base, 1e-20);
+  near(parallelPlateCapacitance(1, 2e-3), base / 2, 1e-20);
+  near(parallelPlateCapacitance(1, 1e-3, 4.7), 4.7 * base, 1e-20);
+  assert.equal(parallelPlateCapacitance(1, 0), Infinity);
+
+  const geometry = { area: 0.01, separation: 2e-3 };
+  const wider = { area: 0.01, separation: 4e-3 };
+
+  // Connected to a battery: V is pinned, E = V/d, and Q and U fall as the gap opens.
+  const connected = plateState({ ...geometry, mode: 'battery', voltage: 12 });
+  const connectedWide = plateState({ ...wider, mode: 'battery', voltage: 12 });
+  assert.equal(connected.V, 12);
+  assert.equal(connectedWide.V, 12);
+  near(connected.E, 12 / 2e-3, 1e-6);
+  near(connectedWide.Q, connected.Q / 2, 1e-20);
+  near(connectedWide.U, connected.U / 2, 1e-20);
+
+  // Isolated: Q is pinned, so E = σ/ε₀ ignores the gap while V and U grow with it.
+  const isolated = plateState({ ...geometry, mode: 'isolated', charge: connected.Q });
+  const isolatedWide = plateState({ ...wider, mode: 'isolated', charge: connected.Q });
+  near(isolated.V, 12, 1e-9);
+  assert.equal(isolatedWide.Q, connected.Q);
+  near(isolatedWide.E, isolated.E, 1e-6);
+  near(isolatedWide.V, 2 * isolated.V, 1e-9);
+  near(isolatedWide.U, 2 * isolated.U, 1e-20);
+
+  // Three forms of the stored energy agree, and the field's energy density fills the gap with it.
+  const { C, Q, V, U, E } = connected;
+  near(storedEnergy(C, V), U, 1e-20);
+  near((Q * Q) / (2 * C), U, 1e-20);
+  near(energyDensity(E) * geometry.area * geometry.separation, U, 1e-20);
+  const glass = plateState({ ...geometry, kappa: 4.7, mode: 'battery', voltage: 12 });
+  near(energyDensity(glass.E, 4.7) * geometry.area * geometry.separation, glass.U, 1e-20);
+
+  // A dielectric in a connected capacitor: E stays V/d, Q and U grow by κ.
+  near(glass.E, connected.E, 1e-6);
+  near(glass.Q, 4.7 * connected.Q, 1e-20);
+  near(glass.U, 4.7 * connected.U, 1e-20);
+
+  // Bound charge: none in vacuum, approaching the free charge as κ grows.
+  assert.equal(boundChargeDensity(1e-6, 1), 0);
+  near(boundChargeDensity(1e-6, 2), 0.5e-6, 1e-18);
+  assert.ok(boundChargeDensity(1e-6, 1e6) > 0.99999e-6, 'bound charge nearly cancels at huge κ');
+  near(glass.sigmaBound, glass.sigmaFree * (1 - 1 / 4.7), 1e-18);
+  // The free minus bound charge is what the vacuum gap would need for the same field.
+  near(glass.sigmaFree - glass.sigmaBound, connected.sigmaFree, 1e-18);
+
+  // Series and parallel combinations.
+  near(seriesCapacitance([4e-6, 4e-6]), 2e-6, 1e-18);
+  near(parallelCapacitance([4e-6, 4e-6]), 8e-6, 1e-18);
+  assert.ok(seriesCapacitance([1e-6, 3e-6, 6e-6]) < 1e-6, 'series is below the smallest element');
+  near(seriesCapacitance([3e-6, 6e-6]), 2e-6, 1e-18);
+  assert.equal(parallelCapacitance([]), 0);
+  assert.equal(seriesCapacitance([]), 0);
 }
 
 console.log('electromagnetism tests passed');

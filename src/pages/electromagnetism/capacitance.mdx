@@ -1,0 +1,319 @@
+---
+layout: ../../layouts/TextbookLayout.astro
+title: Capacitance
+description: Store charge and energy between two conductors — C = Q/ΔV, the parallel-plate capacitor, dielectrics, and series–parallel combinations.
+canonicalPath: /electromagnetism/capacitance
+---
+
+import ModuleHero from '../../components/modules/ModuleHero.astro';
+import InteractiveAnchor from '../../components/interactive/InteractiveAnchor.astro';
+import QuestionSequence from '../../components/interactive/QuestionSequence.jsx';
+import DerivationPanel from '../../components/textbook/DerivationPanel.astro';
+import ProblemSolvingSection from '../../components/textbook/ProblemSolvingSection.astro';
+import WorkedExampleCard from '../../components/textbook/WorkedExampleCard.astro';
+import ParallelPlateSheets from '../../components/electromagnetism/ParallelPlateSheets.astro';
+import CapacitorPlates from '../../components/electromagnetism/CapacitorPlates';
+import { electromagnetismPath } from '../../data/modules';
+
+<ModuleHero module={electromagnetismPath} currentPath="/electromagnetism/capacitance" />
+
+<div id="page-content"></div>
+
+# Capacitance
+
+Loosely speaking, capacitance measures the ability of an object to "store charge".  (Most capacitors have zero net charge, and it's really a highly imbalanced charge distribution when "charged".)  To illustrate this concept, consider two flat conducting plates of area $A$, facing each other across a small gap $d$. When they are charged, the charge spreads evenly over each plate's inner face, with surface densities $+\sigma$ and $-\sigma$, where $\sigma = Q/A$.
+
+The [Gauss' Law](/electromagnetism/gauss-law) page found the field of a single infinite sheet: $\sigma/2\varepsilon_0$, pointing away from a positive sheet on both sides. Between two oppositely charged plates, the constituent electric fields of the two point the same way and simply add; outside they cancel:
+
+$$
+E = \frac{\sigma}{\varepsilon_0} = \frac{Q}{\varepsilon_0 A}\quad\text{(between the plates)}, \qquad E = 0\quad\text{(outside)}.
+$$
+
+<DerivationPanel title="Why is the field σ/ε₀ between the plates and zero outside?">
+
+<ParallelPlateSheets />
+
+Each sheet on its own produces a uniform field of magnitude $\sigma/2\varepsilon_0$ on both sides, pointing away from the positive sheet and toward the negative sheet.
+
+- **Left of both sheets:** the positive sheet's field points left, the negative sheet's field points right. They cancel.
+- **Between the sheets:** both fields point from the positive sheet toward the negative sheet, so they add to $\sigma/\varepsilon_0$.
+- **Right of both sheets:** again opposite, again zero.
+
+Real plates are finite, so this is exact only far from the edges. It is an excellent approximation when the gap $d$ is small compared with the width of the plates.
+
+</DerivationPanel>
+
+From the [Electric Potential](/electromagnetism/potential) page, we know that the strong interior field corresponds to a potential difference $\Delta V$ between the plates. For a capacitor, this potential difference is proportional to the charge $Q$ on either plate. The constant of proportionality is the **capacitance**:
+
+$$
+C = \frac{Q}{\Delta V}.
+$$
+
+Capacitance is measured in coulombs per volt, called **farads** ($\text{F}$). A large capacitance means the conducting plates can hold a lot of charge for a modest potential difference.  The ratio does not depend on how much charge is stored. Doubling $Q$ doubles $\Delta V$ and leaves $C$ alone. Capacitance is determined by the geometry of the conductors and can be further modified by the addition of dielectric materials.    
+
+The field between the plates is uniform, so the potential difference is just the field times the distance, $\Delta V = Ed$. Then
+
+$$
+C = \frac{Q}{\Delta V} = \frac{Q}{Ed} = \frac{Q}{\left(Q/\varepsilon_0 A\right)d},
+$$
+
+which gives
+
+$$
+C = \frac{\varepsilon_0 A}{d}.
+$$
+
+Bigger plates hold more charge at the same potential difference, and moving them closer does the same. Near the edges the field bulges outward in a **fringing field**, which this formula ignores. The correction is small when $d$ is small compared with the plate size.
+
+A farad is an enormous capacitance. Plates one square meter in area, one millimeter apart, give only $C = (8.85\times10^{-12})(1)/(10^{-3}) \approx 8.9\,\text{nF}$. Everyday capacitors are measured in picofarads, nanofarads, and microfarads, and reach larger values by rolling long thin foils into a tight spiral and filling the gap with an insulator.
+
+## Energy Stored
+
+Charging a capacitor takes work. The first bit of charge moves across with zero potential difference, but every bit after that has to climb an ever-increasing potential difference. The total work, which the capacitor stores as energy, is
+
+$$
+U = \frac{Q^2}{2C} = \frac{1}{2}Q\,\Delta V = \frac{1}{2}C\,\Delta V^2.
+$$
+
+<DerivationPanel title="Where does the factor of one half come from?">
+
+Partway through charging, the capacitor holds charge $q$ and the potential difference is $\Delta V = q/C$. Moving one more small charge $dq$ across takes work
+
+$$
+dW = \Delta V\,dq = \frac{q}{C}\,dq.
+$$
+
+Adding up every step from $q = 0$ to $q = Q$,
+
+$$
+U = \int_0^Q \frac{q}{C}\,dq = \frac{Q^2}{2C}.
+$$
+
+The one half appears because the potential difference ramps up from zero, so the average potential difference the charge climbs is half the final value. Substituting $Q = C\,\Delta V$ gives the other two forms.
+
+</DerivationPanel>
+
+Where is that energy? We typically say the energy is stored *in the field*, rather than talking about a highly imbalanced charge distribution. For a parallel-plate capacitor, substitute $C = \varepsilon_0 A/d$ and $\Delta V = Ed$:
+
+$$
+U = \frac{1}{2}\,\frac{\varepsilon_0 A}{d}\,(Ed)^2 = \frac{1}{2}\varepsilon_0 E^2\,(Ad).
+$$
+
+The product $Ad$ is the volume between the plates, where the field lives. The stored energy per unit volume, the **energy density**, is
+
+$$
+u = \frac{1}{2}\varepsilon_0 E^2.
+$$
+
+Although we found it here for an idealized parallel-plate capacitor, this result holds for *any electric field* in vacuum. Wherever there is a field, there is energy.
+
+## Dielectrics
+
+If we fill the gap of a capacitor with an insulator such as plastic, glass, or ceramic, the capacitance goes up. An insulator of this kind is called a **dielectric**.  This material also conveniently holds the two conducting plates apart.
+
+A dielectric has no free charge to travel through it, but its molecules still respond to the field. Each one stretches or rotates slightly, with its positive charge nudged along the field and its negative charge nudged against it. Inside the material these small shifts cancel, but at the surfaces they do not. The face beside the positive plate is left with a thin layer of negative **bound charge**, and the face beside the negative plate gets positive bound charge. That bound charge cancels part of the plates' field.
+
+How much it cancels is described by the **dielectric constant** $\kappa$ (kappa): with the same free charge on the plates, the field inside is reduced to
+
+$$
+E = \frac{E_0}{\kappa} = \frac{\sigma}{\kappa\varepsilon_0}.
+$$
+
+A weaker field means a smaller potential difference for the same charge, so the capacitance rises by the same factor:
+
+$$
+C = \frac{\kappa\,\varepsilon_0 A}{d}.
+$$
+
+Vacuum (and air, approximately) has $\kappa = 1$. Polystyrene is about $2.6$, glass about $4.7$, and specialized ceramics can reach the thousands. A dielectric also lets a capacitor survive larger applied voltages. Every material has a **dielectric strength**, the field at which it breaks down and conducts. For air it is about $3\times10^{6}\,\text{V/m}$, which is why a 1 mm air gap sparks at a few kilovolts.
+
+## Connected or Isolated?
+
+A capacitor can be charged and then either left connected to the battery or disconnected from it. The two cases respond very differently when you change the capacitor:
+
+- **Connected:** the battery holds $\Delta V$ fixed. If $C$ changes, charge flows onto or off the plates until $Q = C\,\Delta V$ again.
+- **Isolated:** the charge has nowhere to go, so $Q$ stays fixed. If $C$ changes, it is $\Delta V = Q/C$ that changes.
+
+Although most capacitors are fixed components, it's good practice to play with the idea of modifying them under different conditions:
+
+<InteractiveAnchor id="capacitor-plates" />
+
+<CapacitorPlates client:visible />
+
+**Try it:**
+
+- With the battery connected, pull the plates apart. $C$ falls, charge drains back into the battery, and $U$ drops.
+- Disconnect the battery and pull the plates apart again. Now $Q$ holds steady, the field stays the same, and both $\Delta V$ and $U$ climb.
+- Fill the gap with glass in each mode. Connected, $Q$ grows by a factor of $\kappa$ and the field stays the same. Isolated, $Q$ stays the same and the field drops by a factor of $\kappa$.
+
+The plates attract each other, so pulling them apart always takes positive work from your hand. In the isolated case that work goes straight into the field: the field stays the same while the volume holding it grows. In the connected case the capacitor *loses* energy even though you did work on it. 
+
+## Series vs. Parallel
+
+Circuits often combine several capacitors. A group of them can be replaced by a single **equivalent capacitance** that stores the same charge at the same potential difference.
+
+In **parallel**, every capacitor is connected across the same two points, so each has the same $\Delta V$. The charges add, giving $Q = (C_1 + C_2 + \cdots)\,\Delta V$:
+
+$$
+C_{\text{eq}} = C_1 + C_2 + \cdots
+$$
+
+Putting capacitors in parallel is like making one capacitor with bigger plates.
+
+In **series**, the capacitors sit one after another along a single path. Each carries the same charge $Q$, and the potential differences add, giving $\Delta V = Q/C_1 + Q/C_2 + \cdots$:
+
+$$
+\frac{1}{C_{\text{eq}}} = \frac{1}{C_1} + \frac{1}{C_2} + \cdots
+$$
+
+A series combination always has less capacitance than its smallest member. It behaves like a capacitor with a wider gap.
+
+<DerivationPanel title="Why do capacitors in series all carry the same charge?">
+
+Look at two capacitors in series. The right plate of the first, the left plate of the second, and the wire joining them form one conductor that is connected to nothing else. It starts neutral, and no charge can reach it from outside.
+
+When the battery puts $+Q$ on the far left plate, that plate pulls $-Q$ onto the plate facing it. That $-Q$ must come from the isolated conductor, which is left with $+Q$ on its other end, the plate of the second capacitor. The same thing happens down the whole chain, so every capacitor carries $\pm Q$.
+
+</DerivationPanel>
+
+These rules are the reverse of the ones for resistors on the next page, where resistances add in series. The Circuit Builder on the [Electric Current](/electromagnetism/current) page includes capacitors, so you can wire up combinations and watch them charge.
+
+<ProblemSolvingSection title="Problem Solving">
+  <WorkedExampleCard title="Charging a Parallel-Plate Capacitor" accent="blue">
+    #### Problem
+
+    Two plates, each $200\,\text{cm}^2$, are $1.5\,\text{mm}$ apart in air and connected to a $9\,\text{V}$ battery. Find the capacitance and the charge on each plate.
+
+    #### Use
+
+    $$
+    C = \frac{\varepsilon_0 A}{d}, \qquad Q = C\,\Delta V.
+    $$
+
+    #### Solve
+
+    $$
+    C = \frac{(8.85\times10^{-12})(0.020)}{1.5\times10^{-3}} \approx 1.18\times10^{-10}\,\text{F} = 118\,\text{pF},
+    $$
+
+    $$
+    Q = (1.18\times10^{-10})(9) \approx 1.06\times10^{-9}\,\text{C} \approx 1.1\,\text{nC}.
+    $$
+
+    #### Check
+
+    Plates you could hold in your hand give picofarads and nanocoulombs, which is why practical capacitors roll up large foils around a thin dielectric.
+  </WorkedExampleCard>
+
+  <WorkedExampleCard title="Pulling Apart an Isolated Capacitor" accent="red">
+    #### Problem
+
+    A $100\,\text{pF}$ parallel-plate capacitor is charged to $12\,\text{V}$ and disconnected. Its gap is then doubled. Find the new potential difference and how much work was done.
+
+    #### Use
+
+    Isolated, $Q$ is fixed. $C \propto 1/d$ and $U = \tfrac{1}{2}Q\,\Delta V$.
+
+    #### Solve
+
+    $$
+    Q = (100\times10^{-12})(12) = 1.2\,\text{nC}, \qquad C' = 50\,\text{pF}, \qquad \Delta V' = \frac{Q}{C'} = 24\,\text{V}.
+    $$
+
+    $$
+    U = \tfrac{1}{2}(1.2\,\text{nC})(12\,\text{V}) = 7.2\,\text{nJ}, \qquad U' = \tfrac{1}{2}(1.2\,\text{nC})(24\,\text{V}) = 14.4\,\text{nJ}.
+    $$
+
+    The work done pulling the plates apart is $U' - U = 7.2\,\text{nJ}$.
+
+    #### Check
+
+    The plates attract, so separating them should take positive work, and the energy does increase.
+  </WorkedExampleCard>
+
+  <WorkedExampleCard title="Sliding in Glass While Connected" accent="blue">
+    #### Problem
+
+    The same $100\,\text{pF}$ capacitor stays connected to its $12\,\text{V}$ battery while a glass slab ($\kappa = 4.7$) is slid in to fill the gap. Find the new charge and stored energy.
+
+    #### Use
+
+    $$
+    C = \kappa C_0, \qquad Q = C\,\Delta V, \qquad U = \tfrac{1}{2}C\,\Delta V^2.
+    $$
+
+    #### Solve
+
+    $$
+    C = 4.7(100\,\text{pF}) = 470\,\text{pF}, \qquad Q = (470\times10^{-12})(12) \approx 5.6\,\text{nC},
+    $$
+
+    $$
+    U = \tfrac{1}{2}(470\times10^{-12})(12)^2 \approx 3.4\times10^{-8}\,\text{J} = 34\,\text{nJ}.
+    $$
+
+    #### Check
+
+    With $\Delta V$ fixed, the charge and the energy both scale by $\kappa$: $1.2\,\text{nC} \to 5.6\,\text{nC}$ and $7.2\,\text{nJ} \to 34\,\text{nJ}$.
+  </WorkedExampleCard>
+
+  <WorkedExampleCard title="A Series–Parallel Network" accent="red">
+    #### Problem
+
+    $C_2 = 2\,\mu\text{F}$ and $C_3 = 4\,\mu\text{F}$ are in parallel. That pair is in series with $C_1 = 6\,\mu\text{F}$, and the whole network is across $12\,\text{V}$. Find the equivalent capacitance and the charge on each capacitor.
+
+    #### Use
+
+    Parallel capacitances add, reciprocals add in series, and $Q = C\,\Delta V$ for each piece.
+
+    #### Solve
+
+    $$
+    C_{23} = 2 + 4 = 6\,\mu\text{F}, \qquad \frac{1}{C_{\text{eq}}} = \frac{1}{6} + \frac{1}{6} \;\Rightarrow\; C_{\text{eq}} = 3\,\mu\text{F}.
+    $$
+
+    $$
+    Q_1 = Q_{\text{total}} = (3\,\mu\text{F})(12\,\text{V}) = 36\,\mu\text{C}, \qquad \Delta V_1 = \frac{36}{6} = 6\,\text{V}.
+    $$
+
+    The parallel pair has the remaining $6\,\text{V}$ across it, so $Q_2 = (2)(6) = 12\,\mu\text{C}$ and $Q_3 = (4)(6) = 24\,\mu\text{C}$.
+
+    #### Check
+
+    $Q_2 + Q_3 = 36\,\mu\text{C} = Q_1$, as it must be for the pair in series with $C_1$.
+  </WorkedExampleCard>
+</ProblemSolvingSection>
+
+<QuestionSequence
+  client:load
+  eyebrow="Capacitance Checkpoint"
+  questions={[
+    {
+      id: 'capacitance-isolated-gap',
+      question: 'A charged parallel-plate capacitor is disconnected from its battery, then its plate separation is doubled. What happens to the potential difference between the plates?',
+      options: [
+        { id: 'A', text: 'It stays the same.', isCorrect: false, explanation: 'That would be true if the battery were still connected and holding it fixed. Disconnected, the charge is what stays fixed.' },
+        { id: 'B', text: 'It doubles.', isCorrect: true, explanation: 'Right. $Q$ is trapped and $C=\\varepsilon_0A/d$ halves, so $\\Delta V=Q/C$ doubles. Equivalently, the field $\\sigma/\\varepsilon_0$ is unchanged and now spans twice the distance.' },
+        { id: 'C', text: 'It halves.', isCorrect: false, explanation: 'It is the capacitance that halves. With $Q$ fixed, a smaller $C$ means a larger $\\Delta V$.' }
+      ]
+    },
+    {
+      id: 'capacitance-connected-dielectric',
+      question: 'A capacitor stays connected to a battery while a dielectric with constant $\\kappa$ is slid in to fill the gap. What happens to the charge on the plates?',
+      options: [
+        { id: 'A', text: 'It is unchanged, because charge cannot cross the dielectric.', isCorrect: false, explanation: 'No charge crosses the gap, but the battery can move more charge onto the plates through the wires, and it does.' },
+        { id: 'B', text: 'It decreases by a factor of $\\kappa$.', isCorrect: false, explanation: 'The field would drop by $\\kappa$ if the capacitor were isolated. Connected, $\\Delta V$ is fixed and it is the charge that responds.' },
+        { id: 'C', text: 'It increases by a factor of $\\kappa$.', isCorrect: true, explanation: 'Correct. $C$ rises to $\\kappa C_0$ and the battery holds $\\Delta V$ fixed, so $Q=C\\,\\Delta V$ grows by $\\kappa$.' }
+      ]
+    },
+    {
+      id: 'capacitance-series',
+      question: 'A $2\\,\\mu\\text{F}$ and a $3\\,\\mu\\text{F}$ capacitor are connected in series. What is their equivalent capacitance?',
+      options: [
+        { id: 'A', text: '$1.2\\,\\mu\\text{F}$', isCorrect: true, explanation: 'Yes. $1/C=1/2+1/3=5/6$, so $C=1.2\\,\\mu\\text{F}$. That is less than the smallest capacitor, as a series combination must be.' },
+        { id: 'B', text: '$5\\,\\mu\\text{F}$', isCorrect: false, explanation: 'Adding capacitances directly is the parallel rule. In series the reciprocals add.' },
+        { id: 'C', text: '$2.5\\,\\mu\\text{F}$', isCorrect: false, explanation: 'The equivalent capacitance is not an average. A series combination always comes out below its smallest member.' }
+      ]
+    }
+  ]}
+/>

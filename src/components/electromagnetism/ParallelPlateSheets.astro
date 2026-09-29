@@ -1,0 +1,39 @@
+---
+// Two facing sheets, +σ and −σ, each contributing a field of σ/2ε₀. The rows show
+// each sheet's field in the three regions and their sum: doubled between the
+// sheets, cancelled outside.
+const regions = [95, 240, 385];
+const arrow = (x: number, y: number, dir: 1 | -1, len = 44) => {
+  const x1 = x - (dir * len) / 2;
+  const x2 = x + (dir * len) / 2;
+  const base = x2 - dir * 9;
+  return { line: `M ${x1} ${y} L ${base} ${y}`, head: `${x2},${y} ${base},${y - 5} ${base},${y + 5}` };
+};
+const plusRow = regions.map((x, i) => arrow(x, 72, i === 0 ? -1 : 1));
+const minusRow = regions.map((x, i) => arrow(x, 112, i === 2 ? -1 : 1));
+const net = arrow(240, 162, 1, 80);
+---
+<svg viewBox="0 0 480 215" role="img"
+  aria-label="Two parallel sheets, positive on the left and negative on the right. Each sheet's field has magnitude sigma over two epsilon naught. Between the sheets both fields point from the positive sheet toward the negative one and add to sigma over epsilon naught; outside they point in opposite directions and cancel."
+  class="mx-auto my-5 w-full max-w-md" style="color:var(--text-primary)">
+  <line x1="190" y1="34" x2="190" y2="186" stroke="var(--accent-red)" stroke-width="4" />
+  <line x1="290" y1="34" x2="290" y2="186" stroke="var(--accent-blue)" stroke-width="4" />
+  <text x="190" y="24" text-anchor="middle" fill="currentColor">+σ</text>
+  <text x="290" y="24" text-anchor="middle" fill="currentColor">−σ</text>
+
+  <g stroke="var(--accent-red)" fill="var(--accent-red)" stroke-width="2">
+    {plusRow.map((a) => <><path d={a.line} /><polygon points={a.head} stroke="none" /></>)}
+  </g>
+  <g stroke="var(--accent-blue)" fill="var(--accent-blue)" stroke-width="2">
+    {minusRow.map((a) => <><path d={a.line} /><polygon points={a.head} stroke="none" /></>)}
+  </g>
+
+  <line x1="30" y1="136" x2="450" y2="136" stroke="var(--grid-line)" stroke-dasharray="4 4" />
+  <text x="95" y="168" text-anchor="middle" fill="currentColor">0</text>
+  <text x="385" y="168" text-anchor="middle" fill="currentColor">0</text>
+  <g stroke="currentColor" fill="currentColor" stroke-width="3">
+    <path d={net.line} /><polygon points={net.head} stroke="none" />
+  </g>
+  <text x="240" y="196" text-anchor="middle" fill="currentColor">E = σ/ε₀</text>
+  <text x="95" y="200" text-anchor="middle" fill="var(--text-muted)" font-size="13">each sheet: σ/2ε₀</text>
+</svg>
