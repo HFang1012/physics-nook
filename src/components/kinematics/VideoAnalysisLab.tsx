@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type DragEvent, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { Button, ControlBar, Select, Toggle } from '../shared/InlineControls';
-import { Readout } from '../shared/Readout';
 import { fixed } from '../../utils/format';
 import { fitPolynomial, predictPolynomial, type FitPoint } from '../../lib/math/leastSquares';
 import {
@@ -674,21 +673,6 @@ export function VideoAnalysisLab() {
         </div>
       ) : (
         <>
-          <Readout variant="cards">
-            <Readout.Value label="clip" value={video.fileName ?? '—'} />
-            <Readout.Value label="length" value={fixed(video.duration, 2)} unit="s" />
-            <Readout.Value
-              label="frame"
-              value={`${video.currentFrame + 1} / ${video.frameCount}`}
-            />
-            <Readout.Value label="points" value={String(totalPoints)} />
-            <Readout.Value
-              label="scale"
-              value={frame ? frame.metersPerPixel.toPrecision(3) : '—'}
-              unit="m/px"
-            />
-          </Readout>
-
           {sizeWarning && (
             <p className="m-0 text-sm text-[var(--text-muted)]">{sizeWarning}</p>
           )}

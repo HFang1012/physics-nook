@@ -42,6 +42,9 @@ export function TransportBar({
   // While dragging, the thumb follows the pointer immediately and the seek is
   // committed behind it; without that the thumb fights the (slower) video.
   const [scrub, setScrub] = useState<number | null>(null);
+  // The readout can count frames instead of seconds, which is the more useful
+  // clock when a high frame rate clip packs many frames into each second.
+  const [showFrames, setShowFrames] = useState(false);
 
   useEffect(() => {
     if (scrub === null) return;
@@ -107,9 +110,16 @@ export function TransportBar({
         className="h-1.5 min-w-[8rem] flex-1 cursor-pointer accent-[var(--accent-blue)]"
       />
 
-      <span className="font-mono text-sm tabular-nums text-[var(--text-muted)]">
-        {fixed(time, 2)} / {fixed(duration, 2)} s
-      </span>
+      <button
+        type="button"
+        onClick={() => setShowFrames((current) => !current)}
+        title={showFrames ? 'Show time in seconds' : 'Show frame number'}
+        className="cursor-pointer rounded border-0 bg-transparent px-1 font-mono text-sm tabular-nums text-[var(--text-muted)] underline decoration-dotted underline-offset-4 hover:text-[var(--text-primary)]"
+      >
+        {showFrames
+          ? `${position + 1} / ${frameCount} frames`
+          : `${fixed(time, 2)} / ${fixed(duration, 2)} s`}
+      </button>
     </div>
   );
 }
