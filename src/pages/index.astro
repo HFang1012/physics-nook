@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import CaerbannogScoreSubmitPanel from '../components/math/caerbannog/CaerbannogScoreSubmitPanel';
 import WavePoolSection from '../components/waves/WavePoolSection';
 import { astronomyPath, electromagnetismPath, getModuleBySlug, mechanicsPath } from '../data/modules';
 
@@ -36,7 +37,10 @@ const homeCards = [
         <WavePoolSection client:load className="!my-0 h-full !min-h-full" />
       </div>
 
-      <div class="pointer-events-none relative z-10 mx-auto flex h-full max-w-6xl flex-col justify-end px-4 pb-[clamp(2rem,15vh,9rem)] pt-16 md:px-6 lg:pt-24">
+      <div class="pointer-events-none relative z-10 mx-auto flex h-full max-w-6xl flex-col justify-between gap-6 px-4 pb-[clamp(2rem,15vh,9rem)] pt-16 md:px-6 lg:pt-24">
+        <div class="pointer-events-auto relative z-20 w-full max-w-xl">
+          <CaerbannogScoreSubmitPanel client:load />
+        </div>
         <div class="pointer-events-none relative z-20">
           <div class="absolute -inset-6 -z-10 rounded-[2rem] bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.24),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(14,165,233,0.2),transparent_36%)] blur-2xl"></div>
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

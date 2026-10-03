@@ -51,6 +51,56 @@ export const CAERBANNOG_DEFAULTS = {
 export const caerbannogScore = (wave: number, enemiesSlain: number, goldCollected: number): number =>
   wave * enemiesSlain + goldCollected;
 
+/**
+ * Pick run stats that validate for a target total score (local dev / QA inject).
+ * Uses wave 1 with all points attributed to gold so the breakdown stays simple.
+ */
+export const caerbannogScoreComponentsForTotal = (
+  score: number,
+): { wave: number; enemiesSlain: number; goldCollected: number } => ({
+  wave: 1,
+  enemiesSlain: 0,
+  goldCollected: score,
+});
+
+/** Build a leaderboard row from a display name and total score (QA / manual submit). */
+export const buildCaerbannogScoreEntryFromManualInput = (
+  name: string,
+  rawScore: string,
+  createdAt = Date.now(),
+):
+  | { ok: true; entry: CaerbannogLeaderboardScore }
+  | { ok: false; errors: string[] } => {
+  const trimmed = rawScore.trim();
+  if (!trimmed || !/^-?\d+$/.test(trimmed)) {
+    return { ok: false, errors: ['score must be an integer.'] };
+  }
+
+  const scoreValue = Number.parseInt(trimmed, 10);
+  const components = caerbannogScoreComponentsForTotal(scoreValue);
+  const validation = validateCaerbannogScoreSubmission({
+    name,
+    score: scoreValue,
+    ...components,
+  });
+
+  if (!validation.ok) {
+    return { ok: false, errors: validation.errors };
+  }
+
+  return {
+    ok: true,
+    entry: {
+      name: validation.name,
+      score: validation.score,
+      wave: validation.wave,
+      enemiesSlain: validation.enemiesSlain,
+      goldCollected: validation.goldCollected,
+      createdAt,
+    },
+  };
+};
+
 export const validateCaerbannogScoreSubmission = (payload: {
   name?: unknown;
   score?: unknown;

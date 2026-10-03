@@ -56,11 +56,15 @@ import {
   type ShopId,
 } from '../../../lib/caerbannog/upgrades';
 import {
-  CAERBANNOG_DEFAULTS,
   caerbannogScore,
   selectBestCaerbannogScoresByUniqueName,
   type CaerbannogLeaderboardScore,
 } from '../../../lib/caerbannog/leaderboard';
+import {
+  readCaerbannogLocalScores,
+  writeCaerbannogLocalScore,
+  type CaerbannogStoredScore,
+} from '../../../lib/caerbannog/localLeaderboard';
 import {
   isBlockedLeaderboardName,
   sanitizeLeaderboardName,
@@ -203,7 +207,7 @@ const readBest = (): number => {
 };
 
 type ApiStatus = 'checking' | 'online' | 'offline';
-type CaerbannogScoreEntry = CaerbannogLeaderboardScore & { id?: string };
+type CaerbannogScoreEntry = CaerbannogStoredScore;
 
 export default function CaerbannogDefense({ onExit }: { onExit?: () => void }) {
   const seedRef = useRef(Math.floor(Math.random() * 1e9));
@@ -253,35 +257,11 @@ export default function CaerbannogDefense({ onExit }: { onExit?: () => void }) {
     }
   }, [state.bestWave]);
 
-  const loadLocalScores = useCallback((): CaerbannogScoreEntry[] => {
-    if (typeof window === 'undefined') {
-      return [];
-    }
-    try {
-      const raw = window.localStorage.getItem(CAERBANNOG_DEFAULTS.localStorageKey);
-      const parsed = raw ? JSON.parse(raw) : [];
-      if (Array.isArray(parsed)) {
-        return selectBestCaerbannogScoresByUniqueName(parsed as CaerbannogScoreEntry[]);
-      }
-    } catch {
-      return [];
-    }
-    return [];
+  const saveLocalScore = useCallback((score: CaerbannogScoreEntry) => {
+    const next = writeCaerbannogLocalScore(score);
+    setLocalScores(next);
+    return next;
   }, []);
-
-  const saveLocalScore = useCallback(
-    (score: CaerbannogScoreEntry) => {
-      const next = selectBestCaerbannogScoresByUniqueName([...loadLocalScores(), score]);
-      try {
-        window.localStorage.setItem(CAERBANNOG_DEFAULTS.localStorageKey, JSON.stringify(next));
-      } catch {
-        // Local scores are a bonus path; the game keeps running without storage.
-      }
-      setLocalScores(next);
-      return next;
-    },
-    [loadLocalScores],
-  );
 
   const refreshLeaderboard = useCallback(async () => {
     try {
@@ -379,9 +359,9 @@ export default function CaerbannogDefense({ onExit }: { onExit?: () => void }) {
 
   // Load the leaderboard once on mount.
   useEffect(() => {
-    setLocalScores(loadLocalScores());
+    setLocalScores(readCaerbannogLocalScores());
     void refreshLeaderboard();
-  }, [loadLocalScores, refreshLeaderboard]);
+  }, [refreshLeaderboard]);
 
   // Real-time loop: only runs while playing, so the intro/intermission/gameover
   // screens stay idle (no wasted frames). Restarts when play resumes.

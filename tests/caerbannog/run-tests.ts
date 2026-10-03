@@ -13,6 +13,8 @@ import {
   CAERBANNOG_DEFAULTS,
   caerbannogScore,
   selectBestCaerbannogScoresByUniqueName,
+  buildCaerbannogScoreEntryFromManualInput,
+  caerbannogScoreComponentsForTotal,
   validateCaerbannogScoreSubmission,
 } from '../../src/lib/caerbannog/leaderboard.ts';
 import {
@@ -1004,6 +1006,21 @@ console.log('Caerbannog progression tests passed.');
   assert.equal(caerbannogScore(1, 0, 0), 0, 'a wave-1 wipeout with no kills/gold scores zero');
   assert.equal(caerbannogScore(5, 12, 40), 100, 'score = wave*enemiesSlain + goldCollected');
   assert.equal(caerbannogScore(12, 80, 350), 1310);
+
+  const injected = caerbannogScoreComponentsForTotal(42_000);
+  assert.equal(caerbannogScore(injected.wave, injected.enemiesSlain, injected.goldCollected), 42_000);
+  assert.ok(
+    validateCaerbannogScoreSubmission({
+      name: 'QA',
+      score: 42_000,
+      ...injected,
+    }).ok,
+    'injected breakdown validates',
+  );
+
+  const manual = buildCaerbannogScoreEntryFromManualInput('Lancelot', ' 1200 ');
+  assert.ok(manual.ok, 'manual name/score input builds a row');
+  assert.equal(manual.ok && manual.entry.score, 1200);
 
   const valid = validateCaerbannogScoreSubmission({
     name: '  Sir  Robin ',

@@ -8,6 +8,8 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
 const site = process.env.PUBLIC_SITE_URL ?? process.env.SITE_URL ?? 'https://physicsnook.com';
+const leaderboardApiOrigin =
+  process.env.PUBLIC_LEADERBOARD_API_ORIGIN ?? 'https://physicsnook.com';
 const ignoredDevWatchFiles = [
   '**/apps/client/dist/**',
   '**/dist/**',
@@ -47,6 +49,14 @@ export default defineConfig({
     server: {
       watch: {
         ignored: ignoredDevWatchFiles,
+      },
+      // Astro's local server does not run Pages Functions. Forward leaderboard
+      // calls to the deployed D1 API so local score submits hit the database.
+      proxy: {
+        '/api': {
+          target: leaderboardApiOrigin,
+          changeOrigin: true,
+        },
       },
     },
   },
